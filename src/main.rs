@@ -1,4 +1,6 @@
-use bevy::prelude::*;
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+
+use bevy::{prelude::*, window::PresentMode};
 
 use barrenlands::{util, BarrenlandsPlugin};
 
@@ -7,10 +9,10 @@ fn main() {
         .add_plugins((
             DefaultPlugins.set(WindowPlugin {
                 primary_window: Some(Window {
-                    title: "Barrenlands".into(),
-                    resolution: (910., 520.).into(),
-                    // Tells wasm not to override default event handling, like F5, Ctrl+R etc.
+                    present_mode: PresentMode::AutoNoVsync,
                     prevent_default_event_handling: false,
+                    resolution: (910., 540.).into(),
+                    title: "Barrenlands".into(),
                     ..default()
                 }),
                 ..default()
