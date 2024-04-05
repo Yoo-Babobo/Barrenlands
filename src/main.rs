@@ -1,6 +1,6 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use bevy::{prelude::*, window::PresentMode};
+use bevy::{prelude::*, window::{PresentMode, WindowResolution}};
 
 use barrenlands::{util, BarrenlandsPlugin};
 
@@ -11,7 +11,7 @@ fn main() {
                 primary_window: Some(Window {
                     present_mode: PresentMode::AutoNoVsync,
                     prevent_default_event_handling: false,
-                    resolution: (910., 540.).into(),
+                    resolution: WindowResolution::new(910., 540.),
                     title: "Barrenlands".into(),
                     ..default()
                 }),

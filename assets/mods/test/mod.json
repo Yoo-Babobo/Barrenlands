@@ -3,14 +3,5 @@
     "version": "1.0.0",
     "description": "This is a test mod.",
     "author": "The Yule",
-    "components": [
-        {
-            "type": "pallete",
-            "data": {
-                "primary": "",
-                "secondary": "",
-                "tertiary": ""
-            }
-        }
-    ]
+    "components": []
 }

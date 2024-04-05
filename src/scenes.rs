@@ -5,7 +5,9 @@ use crate::util::NoDespawn;
 pub mod boot;
 pub mod credits;
 pub mod loading;
+pub mod multiplayer;
 pub mod options;
+pub mod singleplayer;
 pub mod title;
 pub mod world;
 

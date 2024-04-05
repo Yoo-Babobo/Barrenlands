@@ -4,12 +4,13 @@ use bevy::prelude::*;
 pub enum GameState {
     #[default]
     BootScene,
-    TitleScene,
-    SingleplayerScene,
+    CreditsScene,
+    LoadingScene,
     MultiplayerScene,
     OptionsScene(OptionsState),
-    CreditsScene,
-    World
+    SingleplayerScene,
+    TitleScene,
+    WorldScene
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug, Default)]

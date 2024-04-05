@@ -1,6 +1,34 @@
 use bevy::prelude::*;
 
 #[derive(Component)]
+pub struct ButtonState {
+    pub previous: Interaction,
+    pub pressed: bool,
+    pub hovered: bool
+}
+
+impl Default for ButtonState {
+    fn default() -> Self {
+        Self {
+            previous: Interaction::None,
+            pressed: false,
+            hovered: false
+        }
+    }
+}
+
+#[derive(Debug, Eq, PartialEq)]
+pub enum ButtonInteractionType {
+    HoverStart,
+    HoverEnd,
+    PressStart,
+    PressEnd
+}
+
+#[derive(Deref, Event)]
+pub struct ButtonInteractionEvent(#[deref] pub Entity, pub ButtonInteractionType);
+
+#[derive(Component)]
 pub enum ButtonStyle {
     Primary,
     Secondary,
@@ -14,7 +42,7 @@ pub enum ButtonId {
     None
 }
 
-#[derive(Eq, PartialEq)]
+#[derive(Eq, PartialEq, Debug)]
 pub enum TitleSceneButtonId {
     TitleSceneSingleplayer,
     TitleSceneMultiplayer,
@@ -58,7 +86,7 @@ pub fn ui_node() -> NodeBundle {
 
 pub fn button<T: Component>(builder: &mut ChildBuilder, text: Text, button: ButtonBundle, id: ButtonId, tag: T) {
     builder
-        .spawn((button, id, tag))
+        .spawn((button, id, tag, ButtonState::default()))
             .with_children(|builder| button_text(builder, text));
 }
 

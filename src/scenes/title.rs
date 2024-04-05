@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{cameras::MenuCamera, scenes, states::{GameState, OptionsState}, util::{mods::Mods, ui::{basic_button, BasicButton, ButtonId, ButtonStyle, TitleSceneButtonId, TitleSceneButtonTag}}};
+use crate::{cameras::MenuCamera, scenes, states::{GameState, OptionsState}, util::{mods::Mods, ui::{basic_button, BasicButton, ButtonId, ButtonInteractionEvent, ButtonInteractionType, ButtonStyle, TitleSceneButtonId, TitleSceneButtonTag}}};
 
 pub struct TitleScenePlugin;
 
@@ -14,6 +14,7 @@ impl Plugin for TitleScenePlugin {
 }
 
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>, mods: Res<Mods>) {
+    println!("{:#?}", mods.mods);
     println!("{:#?}", mods.errors);
 
     commands.spawn((
@@ -32,6 +33,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, mods: Res<Mods>
                 justify_content: JustifyContent::Center,
                 grid_template_columns: vec![GridTrack::percent(100.)],
                 grid_template_rows: vec![
+                    GridTrack::auto(),
                     GridTrack::auto(),
                     GridTrack::auto(),
                     GridTrack::auto()
@@ -60,6 +62,12 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, mods: Res<Mods>
                     style: ButtonStyle::Tertiary,
                     tag: TitleSceneButtonTag
                 });
+                basic_button(builder, BasicButton {
+                    id: ButtonId::TitleSceneButton(TitleSceneButtonId::TitleSceneCredits),
+                    text: String::from("Credits"),
+                    style: ButtonStyle::Tertiary,
+                    tag: TitleSceneButtonTag
+                });
             });
 
     commands.spawn(TextBundle {
@@ -81,18 +89,21 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, mods: Res<Mods>
 }
 
 fn interaction(
-    mut interaction_query: Query<(&Interaction, &ButtonId), (Changed<Interaction>, With<TitleSceneButtonTag>)>,
+    mut interaction_event: EventReader<ButtonInteractionEvent>,
+    interaction_query: Query<&ButtonId, With<TitleSceneButtonTag>>,
     mut next_state: ResMut<NextState<GameState>>
 ) {
-    for (interaction, id) in &mut interaction_query {
-        if *interaction == Interaction::Pressed {
-            if let &ButtonId::TitleSceneButton(id) = &id {
-                next_state.set(match id {
-                    TitleSceneButtonId::TitleSceneSingleplayer => GameState::SingleplayerScene,
-                    TitleSceneButtonId::TitleSceneMultiplayer => GameState::MultiplayerScene,
-                    TitleSceneButtonId::TitleSceneOptions => GameState::OptionsScene(OptionsState::Main),
-                    TitleSceneButtonId::TitleSceneCredits => GameState::CreditsScene,
-                });
+    for event in interaction_event.read() {
+        if event.1 == ButtonInteractionType::PressEnd {
+            if let Ok(id) = interaction_query.get(**event) {
+                if let ButtonId::TitleSceneButton(id) = &id {
+                    next_state.set(match id {
+                        TitleSceneButtonId::TitleSceneSingleplayer => GameState::LoadingScene,
+                        TitleSceneButtonId::TitleSceneMultiplayer => GameState::MultiplayerScene,
+                        TitleSceneButtonId::TitleSceneOptions => GameState::OptionsScene(OptionsState::Main),
+                        TitleSceneButtonId::TitleSceneCredits => GameState::CreditsScene,
+                    });
+                }
             }
         }
     }
